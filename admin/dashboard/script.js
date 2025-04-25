@@ -18,14 +18,15 @@ $(document).ready(function () {
 
   function fetchUsers(search = "", sortBy = "user_id", order = "DESC") {
     $.get(
-      `api/get_all_user.php?search=${encodeURIComponent(
+      `../../api/get_all_user.php?search=${encodeURIComponent(
         search
       )}&sort_by=${sortBy}&order=${order}`,
       function (response) {
         const users = response.payload;
         tableBody.empty();
+        $("#total-students").text(users.length);
 
-        users.forEach((user, index) => {
+        users.forEach((user) => {
           const clone = $(rowTemplate.get(0).content).clone();
 
           clone.find(".row-index").text(user.user_id);
@@ -34,7 +35,7 @@ $(document).ready(function () {
 
           const avatarImg = clone.find(".row-avatar");
           const profileUrl = user.profile_url
-            ? `profiles/${user.profile_url}`
+            ? `../../profiles/${user.profile_url}`
             : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
           avatarImg.attr("src", profileUrl);
 
@@ -63,16 +64,12 @@ $(document).ready(function () {
   $("#searchForm").on("submit", function (e) {
     e.preventDefault();
     const search = $("input[name='search']").val();
-    const selectedSort = $("#sortSelect").val() || "";
-    const [sortBy, order] = selectedSort.split("_");
-    fetchUsers(search, sortBy, order);
-  });
+    const selectedSort = $("#sortSelect").val();
 
-  $("#sortSelect").on("change", function () {
-    console.log("chamgw");
-    const selectedSort = $(this).val();
-    const search = $("input[name='search']").val();
-    const [sortBy, order] = selectedSort.split("_");
+    const [sortBy, order] = selectedSort
+      ? selectedSort.split("_")
+      : ["first_name", "ASC"];
+
     fetchUsers(search, sortBy, order);
   });
 

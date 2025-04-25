@@ -1,6 +1,7 @@
 <?php
 require_once("../db.php");
 require_once("../utils.php");
+require_once("./send_verify_link.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -13,9 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $course = isset($_POST['course']) ? $_POST['course'] : null;
     $address = isset($_POST['address']) ? $_POST['address'] : null;
     $birthdate = isset($_POST['birthdate']) ? $_POST['birthdate'] : null;
-    $role = isset($_POST['role']) ? $_POST['role'] : null;
 
-    $requiredFields = ['first_name', 'last_name', 'email', 'password', 'phone_number', 'gender', 'course', 'address', 'birthdate', 'role'];
+    $verificationCode = mt_rand(100000, 999999);
+    $verificationCodeStr = (string) $verificationCode;
+
+    $requiredFields = ['first_name', 'last_name', 'email', 'password', 'phone_number', 'gender', 'course', 'address', 'birthdate'];
     foreach ($requiredFields as $field) {
         if (empty($$field)) {
             throw new Exception("Missing required field: $field");
@@ -24,11 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $profileUrl = null;
 
-    if (!empty($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+    if (!empty($_FILES['profile_url']) && $_FILES['profile_url']['error'] === UPLOAD_ERR_OK) {
         $profileUrl = generateProfileImageName();
     }
 
-    $query = "INSERT INTO users (first_name, last_name, email, password, phone_number, gender, course, address, birthdate, profile_url, role) 
+    $query = "INSERT INTO users (first_name, last_name, email, password, phone_number, gender, course, address, birthdate, profile_url, verification_code) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try {
@@ -45,10 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $address,
             $birthdate,
             $profileUrl,
-            $role
+            $verificationCodeStr
         ]);
 
         if ($stmt->rowCount() > 0) {
+            send_verify_email($email, $verificationCodeStr);
+
             if ($profileUrl !== null) {
                 saveProfileImage($profileUrl);
             }
@@ -59,7 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $fetchStmt->execute([$lastInsertedId]);
             $user = $fetchStmt->fetch(PDO::FETCH_ASSOC);
 
-            response(200, $user, "User created successfully!");
+            $encryptedUserId = encrypt_user_id($lastInsertedId);
+
+            response(200, $user, "User created successfully!", "verify.html?user_id=" . urlencode($encryptedUserId));
         } else {
             throw new Exception("Failed to create user.");
         }

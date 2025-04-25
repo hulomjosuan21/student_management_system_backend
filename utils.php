@@ -55,3 +55,20 @@ function generateProfileImageName()
 
     return null;
 }
+
+define('ENCRYPTION_KEY', 'josuan');
+define('ENCRYPTION_METHOD', 'AES-256-CBC');
+
+function encrypt_user_id($user_id) {
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length(ENCRYPTION_METHOD));
+    $encrypted = openssl_encrypt($user_id, ENCRYPTION_METHOD, ENCRYPTION_KEY, 0, $iv);
+    return base64_encode($iv . $encrypted);
+}
+
+function decrypt_user_id($encrypted_user_id) {
+    $data = base64_decode($encrypted_user_id);
+    $ivLength = openssl_cipher_iv_length(ENCRYPTION_METHOD);
+    $iv = substr($data, 0, $ivLength);
+    $encrypted = substr($data, $ivLength);
+    return openssl_decrypt($encrypted, ENCRYPTION_METHOD, ENCRYPTION_KEY, 0, $iv);
+}

@@ -8,6 +8,7 @@ $database = "final_db_sia";
 $users_table = "users";
 $tasks_table = "tasks";
 $uploadDir = "../profiles/";
+$baseUrl = "/hulom_final_sia/";
 
 try {
     $pdo = new PDO("mysql:host={$server_name};dbname={$database}", $username, $password);

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dim">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="../../favicon.ico" />
 
-    <title>Hulom | Final SIA</title>
+    <title>Dashboard</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -24,7 +24,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../../style.css" />
   </head>
   <body>
     <nav
@@ -32,7 +32,7 @@
     >
       <div class="flex w-full items-center justify-between">
         <div class="flex items-center gap-4">
-          <img src="./favicon.ico" class="w-6" />
+          <img src="../../favicon.ico" class="w-6" />
           <div class="w-[1px] h-4 bg-base-200 transform rotate-12"></div>
           <span class="text-sm font-semibold text-foreground">
             Student Management System
@@ -58,7 +58,7 @@
               <div class="p-2 cursor-default border-b border-base-100 mb-2">
                 <span class="text-sm cursor-default">Josuan</span>
               </div>
-              <li><a href="./profile">Profile</a></li>
+              <li><a href="../../profile">Profile</a></li>
             </ul>
           </div>
 
@@ -76,46 +76,123 @@
       <input id="sidebar-main" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content px-4">
         <main class="mt-[47px]">
-          <div class="py-2">
+          <div class="py-2 flex justify-between gap-4 items-center">
             <span class="text-lg text-primary font-semibold">Dashboard</span>
+
+            <span
+              id="digitalClock"
+              class="text-sm font-normal p-2 bg-base-200 rounded"
+            ></span>
+          </div>
+
+          <div class="py-2">
+            <section class="flex gap-4 justify-between flex-wrap">
+              <div
+                class="card min-w-[100px] flex-1 bg-primary card-xs rounded-md shadow-sm text-base-200"
+              >
+                <div class="card-body">
+                  <div class="flex justify-between">
+                    <span class="card-title">Total Students</span>
+
+                    <span class="card-title">
+                      <i class="fa-solid fa-users"></i>
+                    </span>
+                  </div>
+                  <span class="text-2xl font-bold" id="total-students">
+                    0
+                  </span>
+                </div>
+              </div>
+
+              <div
+                class="card min-w-[100px] flex-1 bg-secondary card-xs rounded-md shadow-sm text-base-200"
+              >
+                <div class="card-body">
+                  <div class="flex justify-between">
+                    <span class="card-title">Total Verified Student</span>
+
+                    <span class="card-title">
+                      <i class="fa-solid fa-users"></i>
+                    </span>
+                  </div>
+                  <span class="text-2xl font-bold"> 0 </span>
+                </div>
+              </div>
+
+              <div
+                class="card min-w-[100px] flex-1 bg-accent card-xs rounded-md shadow-sm text-base-200"
+              >
+                <div class="card-body">
+                  <div class="flex justify-between">
+                    <span class="card-title">Active Session</span>
+
+                    <span class="card-title">
+                      <i class="fa-solid fa-users"></i>
+                    </span>
+                  </div>
+                  <span class="text-2xl font-bold"> 0 </span>
+                </div>
+              </div>
+
+              <div
+                class="card min-w-[100px] flex-1 bg-info card-xs rounded-md shadow-sm text-base-200"
+              >
+                <div class="card-body">
+                  <div class="flex justify-between">
+                    <span class="card-title">System Health</span>
+
+                    <span class="card-title">
+                      <i class="fa-solid fa-users"></i>
+                    </span>
+                  </div>
+                  <span class="text-2xl font-bold">
+                    <i class="fa-regular fa-circle-check text-green-200"></i>
+                    Good
+                  </span>
+                </div>
+              </div>
+            </section>
           </div>
 
           <div class="py-2 flex items-center gap-2">
             <form id="searchForm">
-              <label class="input">
-                <svg
-                  class="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                    stroke-width="2.5"
-                    fill="none"
-                    stroke="currentColor"
+              <div class="flex items-center gap-2">
+                <label class="input">
+                  <svg
+                    class="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
                   >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
-                  </g>
-                </svg>
-                <input
-                  type="search"
-                  class="grow"
-                  placeholder="Search"
-                  name="search"
-                />
-                <kbd class="kbd kbd-sm">↩</kbd>
-              </label>
-            </form>
+                    <g
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.3-4.3"></path>
+                    </g>
+                  </svg>
+                  <input
+                    type="search"
+                    class="grow"
+                    placeholder="Search"
+                    name="search"
+                  />
+                  <kbd class="kbd kbd-sm">↩</kbd>
+                </label>
 
-            <select id="sortSelect" class="select">
-              <option disabled selected value="">Sort by</option>
-              <option value="first_name_asc">First Name (A-Z)</option>
-              <option value="first_name_desc">First Name (Z-A)</option>
-              <option value="last_name_asc">Last Name (A-Z)</option>
-              <option value="last_name_desc">Last Name (Z-A)</option>
-            </select>
+                <select id="sortSelect" class="select">
+                  <option disabled selected value="">Sort by</option>
+                  <option value="first_name_asc">First Name (A-Z)</option>
+                  <option value="first_name_desc">First Name (Z-A)</option>
+                  <option value="last_name_asc">Last Name (A-Z)</option>
+                  <option value="last_name_desc">Last Name (Z-A)</option>
+                </select>
+                <button type="submit" class="btn btn-ghost">Apply</button>
+              </div>
+            </form>
           </div>
 
           <div
@@ -157,7 +234,7 @@
               <td class="row-address"></td>
               <td class="row-age"></td>
               <td class="row-status">
-                <div class="badge text-xs">Status</div>
+                <div class="badge text-xs rounded-full">Status</div>
               </td>
             </tr>
           </template>
@@ -173,12 +250,12 @@
           class="menu bg-base-300 border-r border-base-100 text-base-content min-h-full w-54 px-4 pt-18 pb-4"
         >
           <li>
-            <a href="/hulom_final_sia"
+            <a href="../dashboard/"
               ><i class="fa-solid fa-table-columns"></i> Dashboard</a
             >
           </li>
           <li>
-            <a href="./task"><i class="fa-solid fa-boxes-stacked"></i> Task</a>
+            <a href="../task"><i class="fa-solid fa-boxes-stacked"></i> Task</a>
           </li>
           <li class="mt-auto">
             <button class="btn-ghost">
@@ -194,6 +271,7 @@
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
     ></script>
+    <script src="../../utils.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

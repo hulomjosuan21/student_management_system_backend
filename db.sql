@@ -10,7 +10,7 @@ CREATE TABLE `users` (
   `address` TEXT NOT NULL,
   `birthdate` DATE NOT NULL,
   `profile_url` TEXT DEFAULT NULL,
-  `verification_code` VARCHAR(10) DEFAULT NULL,
+  `verification_code` VARCHAR(6) DEFAULT NULL,
   `role` ENUM('admin','user') NOT NULL DEFAULT 'user',
   `is_verified` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
