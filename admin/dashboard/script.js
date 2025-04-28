@@ -13,6 +13,22 @@ function calculateAge(birthdate) {
 }
 
 $(document).ready(function () {
+  function checkSession() {
+    $.get("../../api/check_session.php", function (response) {
+      if (typeof response === "string") {
+        response = JSON.parse(response);
+      }
+
+      console.log(JSON.stringify(response.payload, null, 2));
+      if (response.payload.role !== "admin") {
+        window.location.href = "/hulom_final_sia/auth/login";
+      }
+    }).fail(function () {
+      window.location.href = "/hulom_final_sia/auth/login";
+    });
+  }
+  checkSession();
+
   const rowTemplate = $("#row-template");
   const tableBody = $("#table-body");
 
@@ -61,6 +77,13 @@ $(document).ready(function () {
 
   fetchUsers();
 
+  $("#logoutButton").click(function () {
+    const confirmation = confirm("Are you sure you want to logout?");
+    if (confirmation) {
+      logout("../../api/logout.php");
+    }
+  });
+
   $("#searchForm").on("submit", function (e) {
     e.preventDefault();
     const search = $("input[name='search']").val();
@@ -71,9 +94,5 @@ $(document).ready(function () {
       : ["first_name", "ASC"];
 
     fetchUsers(search, sortBy, order);
-  });
-
-  $("#avatar").click(function () {
-    $("#popover-1").toggle();
   });
 });

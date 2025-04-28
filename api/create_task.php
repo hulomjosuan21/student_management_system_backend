@@ -43,4 +43,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     response(405, null, "Only POST requests are allowed.");
 }
-?>

@@ -9,9 +9,6 @@ $(document).ready(function () {
     toast.removeClass("hidden");
 
     let formData = new FormData(this);
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
 
     $.ajax({
       url: "../../api/login_user.php",
@@ -20,19 +17,23 @@ $(document).ready(function () {
       processData: false,
       contentType: false,
       success: function (response) {
+        toastMessage.text("You login successfully!");
         if (typeof response === "string") {
           response = JSON.parse(response);
         }
 
-        toastMessage.text("You login successfully!");
-
-        // setTimeout(() => {
-        //   if (response.redirect) {
-        //     window.location.href = response.redirect;
-        //   }
-        // }, 1500);
+        // console.log(JSON.stringify(response.payload, null, 2));
+        if (response.payload.role === "admin") {
+          setTimeout(() => {
+            window.location.href = "../../admin/dashboard";
+          }, 500);
+        } else {
+          setTimeout(() => {
+            window.location.href = "/hulom_final_sia";
+          }, 500);
+        }
       },
-      error: function (xhr, status, error) {
+      error: function (xhr) {
         let message = "Something went wrong. Please try again.";
 
         try {

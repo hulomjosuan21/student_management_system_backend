@@ -1,9 +1,9 @@
 <?php
+session_start();
 require_once("../db.php");
 require_once("../utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    global $baseUrl;
     $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
     $verification_code = isset($_POST['verification_code']) ? $_POST['verification_code'] : null;
     
@@ -21,19 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
         
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($user) {
-            if ((int)$user->is_verified === 1) {
+            if ((int)$user['is_verified'] === 1) {
                 throw new PDOException("User already verified.");
             }
 
-            if ($user->verification_code === $verification_code) {
+            if ($user['verification_code'] === $verification_code) {
                 $updateStmt = $pdo->prepare("UPDATE users SET is_verified = 1 WHERE user_id = :user_id");
                 $updateStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
                 $updateStmt->execute();
+
+                unset($user['password'], $user['verification_code']);
+
+                $_SESSION['user'] = $user;
                 
-                response(200, null,"User verified successfully",$baseUrl."auth/login");
+                response(200, $user,"User verified successfully");
             } else {
                 response(400, null, "Invalid verification code");
             }

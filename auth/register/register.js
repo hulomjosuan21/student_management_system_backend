@@ -27,16 +27,19 @@ $(document).ready(function () {
         if (typeof response === "string") {
           response = JSON.parse(response);
         }
-
         toastMessage.text("You verified successfully!");
 
-        setTimeout(() => {
-          if (response.redirect) {
-            window.location.href = response.redirect;
-          }
-        }, 1500);
+        if (response.payload.role === "admin") {
+          setTimeout(() => {
+            window.location.href = "../../admin/dashboard";
+          }, 500);
+        } else {
+          setTimeout(() => {
+            window.location.href = "/hulom_final_sia";
+          }, 500);
+        }
       },
-      error: function (xhr, status, error) {
+      error: function (xhr) {
         let message = "Something went wrong. Please try again.";
 
         try {
@@ -80,7 +83,7 @@ $(document).ready(function () {
           if (response.redirect) {
             window.location.href = response.redirect;
           }
-        }, 1500);
+        }, 500);
       },
       error: function (xhr, status, error) {
         toastMessage.text(error);

@@ -1,9 +1,9 @@
 <?php
+session_start();
 require_once("../db.php");
 require_once("../utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    global $baseUrl;
     $email = isset($_POST['email']) ? trim($_POST['email']) : null;
     $password = isset($_POST['password']) ? $_POST['password'] : null;
 
@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             unset($user['password'], $user['verification_code']);
 
-            $encryptedUserId = encrypt_user_id($user['user_id']);
+            $_SESSION['user'] = $user;
 
-            response(200, $user, "Login successful!", $baseUrl);
+            response(200, $user, "Login successful!");
         } else {
             response(401, null, "Invalid email or password.");
         }

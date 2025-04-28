@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  const digitalClock = $("#digitalClock");
+
   function updateClock() {
     const now = new Date();
 
@@ -15,9 +17,31 @@ $(document).ready(function () {
 
     const fullDateTime = `${formattedDate} ${time}`;
 
-    document.getElementById("digitalClock").textContent = fullDateTime;
+    digitalClock.text(fullDateTime);
   }
 
-  setInterval(updateClock, 1000);
-  updateClock();
+  if (digitalClock) {
+    setInterval(updateClock, 1000);
+    updateClock();
+  }
+});
+
+function logout(route) {
+  $.get(route, function (response) {
+    if (typeof response === "string") {
+      response = JSON.parse(response);
+    }
+
+    if (response.status == 200) {
+      window.location.href = "/hulom_final_sia/auth/login";
+    } else {
+      alert("Logout failed. Please try again.");
+    }
+  }).fail(function () {
+    alert("An error occurred during logout.");
+  });
+}
+
+$("#avatar").click(function () {
+  $("#popover-1").toggle();
 });

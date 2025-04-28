@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $profileUrl = null;
 
     if (!empty($_FILES['profile_url']) && $_FILES['profile_url']['error'] === UPLOAD_ERR_OK) {
-        $profileUrl = generateProfileImageName();
+        // $profileUrl = generateProfileImageName();
     }
 
     $query = "INSERT INTO users (first_name, last_name, email, password, phone_number, gender, course, address, birthdate, profile_url, verification_code) 
@@ -54,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt->rowCount() > 0) {
             send_verify_email($email, $verificationCodeStr);
 
-            if ($profileUrl !== null) {
-                saveProfileImage($profileUrl);
-            }
+            // if ($profileUrl !== null) {
+            //     saveProfileImage($profileUrl);
+            // }
 
             $lastInsertedId = $pdo->lastInsertId();
             $fetchQuery = "SELECT user_id, first_name, last_name, email, phone_number, gender, course, address, birthdate, profile_url, role, created_at FROM users WHERE user_id = ?";
