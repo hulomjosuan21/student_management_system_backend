@@ -22,14 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
         $selectColumns = 'user_id, first_name, last_name, email, phone_number, gender, course, address, birthdate, profile_url, role, is_verified, created_at, updated_at';
         
-        // Sanitize sortBy to ensure it's a valid column name
         if (!in_array($sortBy, $columns)) {
-            $sortBy = 'user_id'; // default to user_id if invalid column
+            $sortBy = 'user_id';
         }
         
-        // Sanitize order to ensure it's either ASC or DESC
         if ($order !== 'ASC' && $order !== 'DESC') {
-            $order = 'DESC'; // default to DESC if invalid order
+            $order = 'DESC';
         }
 
         $queryParams = [];

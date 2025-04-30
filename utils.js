@@ -45,3 +45,36 @@ function logout(route) {
 $("#avatar").click(function () {
   $("#popover-1").toggle();
 });
+
+function formDataToObject(formData) {
+  let formObject = {};
+  formData.forEach(function (value, key) {
+    if (formObject[key]) {
+      if (!Array.isArray(formObject[key])) {
+        formObject[key] = [formObject[key]];
+      }
+      formObject[key].push(value);
+    } else {
+      formObject[key] = value;
+    }
+  });
+
+  return formObject;
+}
+
+function formatDueDateWithAMPM(dueDate) {
+  let dateObj = new Date(dueDate);
+
+  let datePart = dateObj.toISOString().slice(0, 10);
+
+  let hours = dateObj.getHours();
+  let minutes = dateObj.getMinutes();
+  let ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+
+  let timePart = hours + ":" + minutes + " " + ampm;
+
+  return datePart + " " + timePart;
+}

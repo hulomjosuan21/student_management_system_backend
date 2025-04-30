@@ -24,6 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $params[] = $_POST['description'];
     }
 
+    if (!empty($_POST['due_date'])) {
+        $fieldsToUpdate[] = "due_date = ?";
+        $params[] = $_POST['due_date'];
+    }
+
     if (empty($fieldsToUpdate)) {
         response(400, null, "No fields provided to update.");
         exit;

@@ -3,9 +3,10 @@ require_once("../db.php");
 require_once("../utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $created_by = isset($_POST['created_by']) ? $_POST['created_by'] : null; // admin user_id
+    $created_by = isset($_POST['created_by']) ? $_POST['created_by'] : null;
     $title = isset($_POST['title']) ? $_POST['title'] : null;
     $description = isset($_POST['description']) ? $_POST['description'] : null;
+    $due_date = isset($_POST['due_date']) ? $_POST['due_date'] : null;
 
     $requiredFields = ['created_by', 'title', 'description'];
     foreach ($requiredFields as $field) {
@@ -25,11 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //     exit;
     // }
 
-    $query = "INSERT INTO tasks (created_by, title, description) VALUES (?, ?, ?)";
+    $query = "INSERT INTO tasks (created_by, title, description, due_date) VALUES (?, ?, ?, ?)";
 
     try {
         $stmt = $pdo->prepare($query);
-        $stmt->execute([$created_by, $title, $description]);
+        $stmt->execute([$created_by, $title, $description,$due_date]);
 
         if ($stmt->rowCount() > 0) {
             $task_id = $pdo->lastInsertId();
