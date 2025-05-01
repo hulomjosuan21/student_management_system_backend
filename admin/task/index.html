@@ -148,6 +148,20 @@
                       />
                     </fieldset>
 
+                    <template id="user-tag-template">
+                      <span
+                        class="border border-base-300 text-xs px-2 py-1 rounded-full flex items-center gap-1"
+                      >
+                        <span class="user-name"></span>
+                        <button
+                          class="ml-1 text-sm font-bold remove-user"
+                          data-user=""
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    </template>
+
                     <!-- Select Students under Title -->
                     <div class="col-span-1">
                       <label
@@ -199,10 +213,58 @@
                     </tr>
                   </thead>
                   <tbody id="table-body"></tbody>
-                  <tbody></tbody>
                 </table>
               </div>
             </div>
+
+            <dialog id="showSubmit" class="modal">
+              <div class="modal-box">
+                <h3 class="text-sm font-semibold text-center">
+                  Assigned Students & Task Status
+                </h3>
+
+                <template id="assigned-student-template">
+                  <tr>
+                    <td class="row-id"></td>
+                    <td class="row-name"></td>
+                    <td class="row-url"></td>
+                    <td class="row-status">
+                      <div class="badge text-xs rounded-full">Status</div>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-success">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+
+                <div class="mt-2">
+                  <div
+                    class="overflow-y-auto max-h-[300px] rounded-md border border-base-300 bg-base-100 mt-4"
+                  >
+                    <table class="table w-full">
+                      <thead class="sticky top-0 bg-base-300 z-10">
+                        <tr>
+                          <th></th>
+                          <th class="">Student</th>
+                          <th class="">URL</th>
+                          <th class="">Status</th>
+                          <th class="text-end"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="assigned-student-tbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="modal-action">
+                  <form method="dialog">
+                    <button class="btn btn-ghost">Close</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
 
             <template id="task-template">
               <tr>
@@ -255,6 +317,9 @@
           </li>
           <li>
             <a href="../task"><i class="fa-solid fa-boxes-stacked"></i> Task</a>
+          </li>
+          <li>
+            <a><i class="fa-solid fa-chart-simple"></i> Analytics</a>
           </li>
           <li class="mt-auto">
             <button class="btn-ghost" id="logoutButton">

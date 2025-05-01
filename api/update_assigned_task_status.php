@@ -5,25 +5,24 @@ require_once("../utils.php");
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $data = json_decode(file_get_contents('php://input'), true);
-        $created_by = isset($data['created_by']) ? $data['created_by'] : null;
-        $task_id = isset($data['task_id']) ? $data['task_id'] : null;
-        $assign_to = isset($data['assign_to']) ? $data['assign_to'] : null;
+        $assigned_task_id = isset($data['assigned_task_id']) ? $data['assigned_task_id'] : null;
+        $task_status = isset($data['task_status']) ? $data['task_status'] : null;
 
-        $requiredFields = ['created_by', 'task_id', 'assign_to'];
+        $requiredFields = ['assigned_task_id','task_status'];
         foreach ($requiredFields as $field) {
             if (empty($$field)) {
                 throw new Exception("Missing required field: $field");
             }
         }
-        $query = "INSERT INTO assigned_tasks (created_by, task_id, assign_to) VALUES (?, ?, ?)";
+        $query = "UPDATE assigned_tasks SET task_status =? WHERE assigned_task_id = ?";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute([$created_by, $task_id, $assign_to]);
+        $stmt->execute([$task_status, $assigned_task_id]);
 
         if ($stmt->rowCount() > 0) {
-            response(200, null, "User task assigned successfully.");
+            response(200, $assigned_task_id, "Assigned task set ".$task_status." successfully.");
         } else {
-            response(200, null, "User task already exists or nothing was inserted.");
+            response(200, $assigned_task_id, "User task already exists or nothing was inserted.");
         }
     } catch (Exception $e) {
         response(400, null, $e->getMessage());

@@ -101,10 +101,107 @@ $(document).ready(function () {
           }
         });
 
+        newRow.find(".btn-info").on("click", () => {
+          $("#showSubmit")[0].showModal();
+          showSubmitStudent(task.task_id);
+        });
+
         tableBody.append(newRow);
       });
     } catch (error) {
       console.error("Error populating table:", error);
+    }
+  }
+
+  async function showSubmitStudent(task_id) {
+    try {
+      const response = await $.get(
+        `../../api/check_student_submit.php?task_id=${task_id}`
+      );
+
+      const data =
+        typeof response === "string" ? JSON.parse(response) : response;
+
+      populateAssignedStudentTable(data.payload);
+      return data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const submittedFileBaseUrl = "http://localhost/hulom_final_sia/attachment/";
+
+  async function populateAssignedStudentTable(studentList) {
+    try {
+      const tbody = $("#assigned-student-tbody");
+      const template = $("#assigned-student-template");
+      tbody.empty();
+
+      if (!studentList || studentList.length === 0) {
+        tbody.append(`
+        <tr>
+          <td colspan="4" class="text-center text-gray-500 py-4">
+            No assigned students found.
+          </td>
+        </tr>
+      `);
+        return;
+      }
+
+      studentList.forEach((student) => {
+        const newRow = template.contents().clone();
+
+        newRow.find(".row-id").text(student.assigned_task_id);
+        newRow
+          .find(".row-name")
+          .text(`${student.first_name} ${student.last_name}`);
+        newRow
+          .find(".row-url")
+          .html(
+            `<a href="${`${submittedFileBaseUrl}${student.attachment_url}`}" target="_blank" class="link text-primary">View</a>`
+          );
+
+        const statusBadge = newRow.find(".row-status .badge");
+        const isVerified = student.task_status === "complete";
+
+        statusBadge
+          .text(isVerified ? "Complete" : "Pending")
+          .removeClass("badge-success badge-error")
+          .addClass(isVerified ? "badge-success" : "badge-error");
+
+        const task_status =
+          student.task_status != "complete" ? "complete" : "pending";
+
+        newRow.find(".btn-success").on("click", () => {
+          updateAssignedTaskStatus(student.assigned_task_id, task_status);
+          showSubmitStudent(student.task_id);
+        });
+
+        tbody.append(newRow);
+      });
+    } catch (error) {
+      console.error("Error populating assigned students:", error);
+    }
+  }
+
+  async function updateAssignedTaskStatus(assignedTaskId, taskStatus) {
+    try {
+      const response = await $.ajax({
+        url: "../../api/update_assigned_task_status.php",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          assigned_task_id: assignedTaskId,
+          task_status: taskStatus,
+        }),
+      });
+
+      const data =
+        typeof response === "string" ? JSON.parse(response) : response;
+
+      console.log(data.message);
+    } catch (error) {
+      console.error("Error populating assigned students:", error);
     }
   }
 
@@ -130,17 +227,41 @@ $(document).ready(function () {
     if (selectedUserIds.includes(userId)) return;
 
     selectedUserIds.push(userId);
-    const $pill = $(`
-      <span class="border border-base-300 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-        ${userName}
-        <button class="ml-1 text-sm font-bold" data-user="${userId}">&times;</button>
-      </span>
-    `);
 
-    $pill.find("button").on("click", () => removeUserTag(userId));
-    $("#tag-container").append($pill);
-    $(`#user-select option[value="${userId}"]`).remove();
-    $("#user-select").val("");
+    const template = document.getElementById("user-tag-template");
+    const clone = template.content.cloneNode(true);
+    const span = clone.querySelector("span");
+    const nameEl = clone.querySelector(".user-name");
+    const button = clone.querySelector("button");
+
+    nameEl.textContent = userName;
+    button.dataset.user = userId;
+
+    button.addEventListener("click", () => removeUserTag(userId));
+    document.getElementById("tag-container").appendChild(clone);
+
+    const optionToRemove = document.querySelector(
+      `#user-select option[value="${userId}"]`
+    );
+    if (optionToRemove) optionToRemove.remove();
+
+    document.getElementById("user-select").value = "";
+  }
+
+  function clearUserTags() {
+    $("#tag-container").empty();
+
+    selectedUserIds.length = 0;
+
+    $("#user-select")
+      .empty()
+      .append('<option disabled selected value="">Pick a user</option>');
+
+    to_assign_user.forEach((user) => {
+      $("#user-select").append(
+        `<option value="${user.assign_to}">${user.name}</option>`
+      );
+    });
   }
 
   function removeUserTag(userId) {
@@ -184,12 +305,14 @@ $(document).ready(function () {
 
       const parsedResponse =
         typeof response === "string" ? JSON.parse(response) : response;
+      toastMessage.text("Task assigned successfully!");
       const created_by = current_user.user_id;
       const task_id = parsedResponse.payload.task_id;
 
       await assignTask(created_by, task_id);
       getAllTasks();
-      toastMessage.text("Task assigned successfully!");
+      this.reset();
+      clearUserTags();
     } catch (error) {
       let message = "Something went wrong. Please try again.";
       if (error?.responseText) {
@@ -204,7 +327,7 @@ $(document).ready(function () {
 
     setTimeout(() => {
       toast.addClass("hidden");
-    }, 3000);
+    }, 2000);
   });
 
   async function assignTask(created_by, task_id) {
