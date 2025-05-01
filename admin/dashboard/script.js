@@ -1,3 +1,5 @@
+const profileBaseUrl = "http://localhost/hulom_final_sia/profiles/";
+
 function calculateAge(birthdate) {
   const birthDate = new Date(birthdate);
   const today = new Date();
@@ -19,7 +21,15 @@ $(document).ready(function () {
         response = JSON.parse(response);
       }
 
-      console.log(JSON.stringify(response.payload, null, 2));
+      const current_user = response.payload;
+      console.log(JSON.stringify(current_user, null, 2));
+
+      const profileUrl = current_user.profile_url
+        ? `${profileBaseUrl}${current_user.profile_url}`
+        : `${profileBaseUrl}default-image.png`;
+
+      $("#nav-avatar-image").attr("src", profileUrl);
+
       if (response.payload.role !== "admin") {
         window.location.href = "/hulom_final_sia/auth/login";
       }
@@ -51,8 +61,8 @@ $(document).ready(function () {
 
           const avatarImg = clone.find(".row-avatar");
           const profileUrl = user.profile_url
-            ? `../../profiles/${user.profile_url}`
-            : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
+            ? `${profileBaseUrl}${user.profile_url}`
+            : `${profileBaseUrl}default-image.png`;
           avatarImg.attr("src", profileUrl);
 
           clone.find(".row-email").text(user.email);

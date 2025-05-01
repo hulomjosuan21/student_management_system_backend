@@ -1,6 +1,8 @@
 $(document).ready(function () {
   const toast = $("#toastContainer");
   const toastMessage = $("#toastMessage");
+  const submittedFileBaseUrl = "http://localhost/hulom_final_sia/attachment/";
+
   let current_user = null;
   const to_assign_user = [];
 
@@ -128,8 +130,6 @@ $(document).ready(function () {
       console.error("Error fetching data:", error);
     }
   }
-
-  const submittedFileBaseUrl = "http://localhost/hulom_final_sia/attachment/";
 
   async function populateAssignedStudentTable(studentList) {
     try {
