@@ -28,4 +28,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 } else {
     response(405, null, 'Only GET requests are allowed.');
 }
-?>

@@ -2,12 +2,11 @@ $(document).ready(function () {
   const toast = $("#toastContainer");
   const toastMessage = $("#toastMessage");
   const submittedFileBaseUrl = "http://localhost/hulom_final_sia/attachment/";
-
+  const profileBaseUrl = "http://localhost/hulom_final_sia/profiles/";
   let current_user = null;
   const to_assign_user = [];
 
   const selectedUserIds = [];
-
   // session sa user na naka login
   function checkSession() {
     $.get("../../api/check_session.php", function (response) {
@@ -17,6 +16,13 @@ $(document).ready(function () {
       if (current_user.role !== "admin") {
         return (window.location.href = "/hulom_final_sia/auth/login");
       }
+
+      const profileUrl = current_user.profile_url
+        ? `${profileBaseUrl}${current_user.profile_url}`
+        : `${profileBaseUrl}default-image.png`;
+
+      $("#nav-avatar-image").attr("src", profileUrl);
+      $("#nav-profile-name").text(current_user.first_name);
 
       populateUserDropdown(to_assign_user);
       getAllTasks();
@@ -365,5 +371,8 @@ $(document).ready(function () {
   $("#logoutButton").click(function () {
     const confirmation = confirm("Are you sure you want to logout?");
     if (confirmation) logout("../../api/logout.php");
+  });
+  $("#avatar").click(function () {
+    $("#popover-1").toggle();
   });
 });

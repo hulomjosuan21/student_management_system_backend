@@ -1,4 +1,6 @@
 <?php
+session_start(); // REQUIRED to access $_SESSION
+
 require_once("../db.php");
 require_once("../utils.php");
 
@@ -22,14 +24,17 @@ $fieldsToUpdate = [
 $setParts = [];
 $params = [];
 
-// Collect fields to update
+// Collect non-empty fields to update
 foreach ($fieldsToUpdate as $field) {
-    if (isset($data[$field])) {
+    if (isset($data[$field]) && $data[$field] !== '') {
         $setParts[] = "$field = ?";
-        $params[] = ($field === 'password') ? password_hash($data[$field], PASSWORD_DEFAULT) : $data[$field];
+        $params[] = ($field === 'password')
+            ? password_hash($data[$field], PASSWORD_DEFAULT)
+            : $data[$field];
     }
 }
 
+// Handle profile image upload
 $profileUrl = null;
 if (!empty($_FILES['profile_url']) && $_FILES['profile_url']['error'] === UPLOAD_ERR_OK) {
     $profileUrl = generateProfileImageName();
@@ -38,7 +43,7 @@ if (!empty($_FILES['profile_url']) && $_FILES['profile_url']['error'] === UPLOAD
 }
 
 if (empty($setParts)) {
-    response(400, null, "No fields to update.");
+    response(400, null, "No valid fields provided for update.");
 }
 
 $params[] = $userId;
@@ -53,10 +58,14 @@ try {
             saveProfileImage($profileUrl);
         }
 
-        $fetchQuery = "SELECT user_id, first_name, last_name, email, phone_number, gender, course, address, birthdate, profile_url, role, created_at FROM users WHERE user_id = ?";
+        $fetchQuery = "SELECT * FROM users WHERE user_id = ?";
         $fetchStmt = $pdo->prepare($fetchQuery);
         $fetchStmt->execute([$userId]);
         $user = $fetchStmt->fetch(PDO::FETCH_ASSOC);
+
+        unset($user['password'], $user['verification_code']);
+
+        $_SESSION['user'] = $user;
 
         response(200, $user, "User updated successfully.");
     } else {

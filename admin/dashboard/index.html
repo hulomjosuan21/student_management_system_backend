@@ -53,7 +53,10 @@
               style="display: none"
             >
               <div class="p-2 cursor-default border-b border-base-100 mb-2">
-                <span class="text-sm cursor-default">Josuan</span>
+                <span
+                  class="text-sm cursor-default"
+                  id="nav-profile-name"
+                ></span>
               </div>
               <li><a href="../../profile">Profile</a></li>
             </ul>
@@ -89,15 +92,13 @@
               >
                 <div class="card-body">
                   <div class="flex justify-between">
-                    <span class="card-title">Total Students</span>
+                    <span class="card-title">Total Users</span>
 
                     <span class="card-title">
                       <i class="fa-solid fa-users"></i>
                     </span>
                   </div>
-                  <span class="text-2xl font-bold" id="total-students">
-                    0
-                  </span>
+                  <span class="text-2xl font-bold" id="total-user"> 0 </span>
                 </div>
               </div>
 
@@ -112,7 +113,9 @@
                       <i class="fa-solid fa-users"></i>
                     </span>
                   </div>
-                  <span class="text-2xl font-bold"> 0 </span>
+                  <span class="text-2xl font-bold" id="total-verified">
+                    0
+                  </span>
                 </div>
               </div>
 
@@ -127,7 +130,7 @@
                       <i class="fa-solid fa-users"></i>
                     </span>
                   </div>
-                  <span class="text-2xl font-bold"> 0 </span>
+                  <span class="text-2xl font-bold" id="count-session"> 0 </span>
                 </div>
               </div>
 
@@ -142,9 +145,8 @@
                       <i class="fa-solid fa-users"></i>
                     </span>
                   </div>
-                  <span class="text-2xl font-bold">
-                    <i class="fa-regular fa-circle-check text-green-200"></i>
-                    Good
+                  <span class="text-2xl font-bold" id="system-health">
+                    Normal
                   </span>
                 </div>
               </div>

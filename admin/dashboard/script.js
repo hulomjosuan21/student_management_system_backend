@@ -29,6 +29,7 @@ $(document).ready(function () {
         : `${profileBaseUrl}default-image.png`;
 
       $("#nav-avatar-image").attr("src", profileUrl);
+      $("#nav-profile-name").text(current_user.first_name);
 
       if (response.payload.role !== "admin") {
         window.location.href = "/hulom_final_sia/auth/login";
@@ -38,6 +39,35 @@ $(document).ready(function () {
     });
   }
   checkSession();
+
+  async function initializeDashboard() {
+    try {
+      const response = await $.get("../../api/dashboard_analytics.php");
+
+      const data =
+        typeof response === "string" ? JSON.parse(response) : response;
+
+      $("#total-user").text(data.payload.user_count);
+      $("#total-verified").text(data.payload.verified_user_count);
+      $("#count-session").text(data.payload.session_count);
+      const systemHealth = data.payload.system_health;
+
+      if (systemHealth.disk_usage === "Normal") {
+        $("#system-health").html(
+          `<i class="fa-regular fa-circle-check text-green-300"></i> ${systemHealth.disk_usage}`
+        );
+      } else {
+        $("#system-health").html(
+          `<i class="fa-solid fa-triangle-exclamation text-red-300"></i> ${systemHealth.disk_usage}`
+        );
+      }
+    } catch (error) {
+      $("#system-health").html(
+        `<i class="fa-solid fa-triangle-exclamation text-red-300"></i> ${error.message}`
+      );
+    }
+  }
+  initializeDashboard();
 
   const rowTemplate = $("#row-template");
   const tableBody = $("#table-body");

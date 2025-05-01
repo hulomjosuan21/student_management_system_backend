@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     try{
         $role = isset($_GET['role']) ? $_GET['role'] : 'user';
 
-        $query = "SELECT user_id, first_name, last_name FROM users WHERE role = ?";
+        $query = "SELECT user_id, first_name, last_name FROM users WHERE role = ? AND is_verified = 1";
 
         $stmt = $pdo->prepare($query);
         $stmt->execute([$role]);
