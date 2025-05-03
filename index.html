@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dim">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
 
-    <title>Hulom | Final SIA</title>
+    <title>Dashboard</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -24,19 +24,155 @@
       rel="stylesheet"
       type="text/css"
     />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="">
-      <button class="btn btn-primary" id="logoutBtn">Logout</button>
-    </div>
-
+    <link rel="stylesheet" href="./style.css" />
     <script
       src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
     ></script>
-    <script src="utils.js"></script>
-    <script src="script.js"></script>
+    <script src="./utils.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <nav
+      class="fixed top-0 left-0 h-[47px] w-full px-4 py-2 z-50 bg-base-300 flex border-b border-base-100"
+    >
+      <div class="flex w-full items-center justify-between">
+        <div class="flex items-center gap-4">
+          <img src="./favicon.ico" class="w-6" />
+          <div class="w-[1px] h-4 bg-base-200 transform rotate-12"></div>
+          <span class="text-sm font-semibold text-foreground">
+            Student Management System
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="relative inline-block">
+            <div class="avatar cursor-pointer" id="avatar">
+              <div class="w-8 rounded-full">
+                <img alt="User Avatar" id="nav-avatar-image" />
+              </div>
+            </div>
+
+            <ul
+              class="absolute mt-2 right-0 z-50 dropdown menu w-52 rounded bg-base-300 shadow-sm"
+              id="popover-1"
+              style="display: none"
+            >
+              <div class="p-2 cursor-default border-b border-base-100 mb-2">
+                <span
+                  class="text-sm cursor-default"
+                  id="nav-profile-name"
+                ></span>
+              </div>
+              <li><a href="./profile">Profile</a></li>
+            </ul>
+          </div>
+
+          <label
+            for="sidebar-main"
+            class="btn btn-ghost btn-sm drawer-button lg:hidden"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </label>
+        </div>
+      </div>
+    </nav>
+
+    <div class="drawer lg:drawer-open">
+      <input id="sidebar-main" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content px-4">
+        <main class="mt-[47px]">
+          <div
+            class="py-2 flex justify-between gap-4 items-center border-b border-base-300"
+          >
+            <span class="text-lg text-primary font-semibold"
+              >My Assigned Task</span
+            >
+
+            <span
+              id="digitalClock"
+              class="text-sm font-normal p-2 bg-base-200 rounded"
+            ></span>
+          </div>
+
+          <span class="p-4 block font-semibold">Pending Task</span>
+
+          <div
+            class="overflow-x-auto rounded-md border border-base-300 bg-base-100"
+          >
+            <table class="table">
+              <thead>
+                <tr class="bg-base-300">
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="pending-table-body"></tbody>
+            </table>
+          </div>
+
+          <template id="pending-row-template">
+            <tr class="hover:bg-base-200">
+              <td class="row-title"></td>
+              <td class="row-description"></td>
+              <td class="row-deadline"></td>
+              <td class="row-status">
+                <div class="badge text-xs rounded-full">Status</div>
+              </td>
+              <td class="tex-tend row-action">
+                <button class="btn btn-secondary btn-xs">
+                  <i class="fa-solid fa-paperclip"></i> Attach
+                </button>
+              </td>
+            </tr>
+          </template>
+
+          <span class="p-4 block font-semibold">Completed Task</span>
+
+          <div
+            class="overflow-x-auto rounded-md border border-base-300 bg-base-100"
+          >
+            <table class="table">
+              <thead>
+                <tr class="bg-base-300">
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+      <div class="drawer-side">
+        <label
+          for="sidebar-main"
+          aria-label="close sidebar"
+          class="drawer-overlay"
+        ></label>
+        <ul
+          class="menu bg-base-300 border-r border-base-100 text-base-content min-h-full w-54 px-4 pt-18 pb-4"
+        >
+          <li>
+            <a href=""><i class="fa-solid fa-boxes-stacked"></i> Task</a>
+          </li>
+          <li>
+            <a><i class="fa-solid fa-chart-simple"></i> Analytics</a>
+          </li>
+          <li class="mt-auto">
+            <button class="btn-ghost" id="logoutBtn">
+              <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </body>
 </html>
