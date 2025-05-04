@@ -115,6 +115,72 @@
             </table>
           </div>
 
+          <dialog id="attachFileModal" class="modal">
+            <div class="modal-box">
+              <form id="attachFileDialog">
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">Pick a file</legend>
+                  <input
+                    type="file"
+                    name="attachment_url"
+                    class="file-input w-full"
+                  />
+                </fieldset>
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">Or a URL</legend>
+                  <input
+                    type="text"
+                    name="attachment_url"
+                    class="file-input w-full"
+                  />
+                </fieldset>
+                <div class="modal-action">
+                  <button
+                    type="button"
+                    class="btn btn-ghost"
+                    onclick="attachFileModal.close()"
+                  >
+                    Cancel
+                  </button>
+
+                  <button type="submit" class="btn btn-primary">Attach</button>
+                </div>
+              </form>
+            </div>
+          </dialog>
+
+          <dialog id="viewDialog" class="modal">
+            <div class="modal-box">
+              <h3 class="font-bold text-lg">Task Details</h3>
+              <div class="py-2 space-y-3">
+                <p><strong>Title:</strong> <span id="dialog-title"></span></p>
+                <p>
+                  <strong>Description:</strong>
+                  <span id="dialog-description"></span>
+                </p>
+                <p>
+                  <strong>Due Date:</strong> <span id="dialog-due-date"></span>
+                </p>
+                <p>
+                  <strong>Status:</strong>
+                  <span
+                    id="dialog-status"
+                    class="badge text-xs rounded-full"
+                  ></span>
+                </p>
+                <p>
+                  <strong>Attachment:</strong>
+                  <span id="dialog-attachment"></span>
+                </p>
+              </div>
+              <div class="modal-action">
+                <button class="btn btn-ghost" onclick="viewDialog.close()">
+                  Close
+                </button>
+              </div>
+            </div>
+          </dialog>
+
           <template id="pending-row-template">
             <tr class="hover:bg-base-200">
               <td class="row-title"></td>
@@ -126,6 +192,22 @@
               <td class="tex-tend row-action">
                 <button class="btn btn-secondary btn-xs">
                   <i class="fa-solid fa-paperclip"></i> Attach
+                </button>
+              </td>
+            </tr>
+          </template>
+
+          <template id="complete-row-template">
+            <tr class="hover:bg-base-200">
+              <td class="row-title"></td>
+              <td class="row-description"></td>
+              <td class="row-deadline"></td>
+              <td class="row-status">
+                <div class="badge text-xs rounded-full">Status</div>
+              </td>
+              <td class="tex-tend row-action">
+                <button class="btn btn-accent btn-xs">
+                  <i class="fa-solid fa-eye"></i> View
                 </button>
               </td>
             </tr>
@@ -146,7 +228,7 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody id="table-body"></tbody>
+              <tbody id="complete-table-body"></tbody>
             </table>
           </div>
         </main>

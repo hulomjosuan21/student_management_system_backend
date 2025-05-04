@@ -106,7 +106,7 @@
               type="radio"
               name="tabs_2"
               class="tab"
-              aria-label="Task List"
+              aria-label="Assign Task"
               checked="checked"
             />
             <div class="tab-content bg-base-200 rounded-md p-4">
@@ -118,10 +118,6 @@
 
               <div class="flex items-center gap-4">
                 <div class="max-w-4xl mx-auto p-6">
-                  <h3 class="text-xl font-bold mb-6 text-center">
-                    Add New Task
-                  </h3>
-
                   <form
                     id="addTaskForm"
                     class="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -218,7 +214,7 @@
             </div>
 
             <dialog id="showSubmit" class="modal">
-              <div class="modal-box">
+              <div class="modal-box w-full max-w-2xl">
                 <h3 class="text-sm font-semibold text-center">
                   Assigned Students & Task Status
                 </h3>
@@ -228,8 +224,9 @@
                     <td class="row-id"></td>
                     <td class="row-name"></td>
                     <td class="row-url"></td>
+                    <td class="row-submitted_at"></td>
                     <td class="row-status">
-                      <div class="badge text-xs rounded-full">Status</div>
+                      <div class="badge text-xs rounded-full"></div>
                     </td>
                     <td class="text-end">
                       <button class="btn btn-sm btn-success">
@@ -247,9 +244,10 @@
                       <thead class="sticky top-0 bg-base-300 z-10">
                         <tr>
                           <th></th>
-                          <th class="">Student</th>
-                          <th class="">URL</th>
-                          <th class="">Status</th>
+                          <th>Student</th>
+                          <th>URL</th>
+                          <th>Submitted At</th>
+                          <th>Status</th>
                           <th class="text-end"></th>
                         </tr>
                       </thead>
@@ -293,10 +291,38 @@
               type="radio"
               name="tabs_2"
               class="tab"
-              aria-label="Assign Task"
+              aria-label="Records"
             />
-            <div class="tab-content bg-base-200 rounded-md p-10">
-              Assign Task
+            <div class="tab-content bg-base-200 rounded-md px-10 py-2">
+              <template id="records-template">
+                <tr>
+                  <th class="row-name"></th>
+                  <th class="row-title"></th>
+                  <th class="row-description"></th>
+                  <th class="row-status">
+                    <div class="badge text-xs rounded-full"></div>
+                  </th>
+                  <th class="row-due_date"></th>
+                  <th class="row-submitted_at"></th>
+                </tr>
+              </template>
+              <div
+                class="overflow-x-auto rounded-md border border-base-300 bg-base-100 mt-4"
+              >
+                <table class="table">
+                  <thead>
+                    <tr class="bg-base-300">
+                      <th>Student Name</th>
+                      <th>Task</th>
+                      <th class="max-w-sm">Description</th>
+                      <th>Task Status</th>
+                      <th>Due Date</th>
+                      <th>Submitted At</th>
+                    </tr>
+                  </thead>
+                  <tbody id="record-table-body"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </main>

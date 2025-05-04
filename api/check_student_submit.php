@@ -11,7 +11,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         $task_id = $_GET['task_id'];
 
-        $stmt = $pdo->prepare("SELECT assigned_task_id, b.task_id, first_name, last_name, task_status, attachment_url FROM users AS a INNER JOIN assigned_tasks AS b ON a.user_id = b.assign_to WHERE task_id = :task_id");
+        $stmt = $pdo->prepare("
+            SELECT 
+                b.assigned_task_id, 
+                b.task_id, 
+                a.first_name, 
+                a.last_name, 
+                b.submitted_at, 
+                b.task_status, 
+                b.attachment_url,
+                c.due_date
+            FROM users AS a
+            INNER JOIN assigned_tasks AS b ON a.user_id = b.assign_to
+            INNER JOIN tasks AS c ON b.task_id = c.task_id
+            WHERE b.task_id = :task_id
+        ");
+
         $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
         $stmt->execute();
 

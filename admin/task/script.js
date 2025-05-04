@@ -7,7 +7,7 @@ $(document).ready(function () {
   const to_assign_user = [];
 
   const selectedUserIds = [];
-  // session sa user na naka login
+  let hasPopulatedDropdown = false;
   function checkSession() {
     $.get("../../api/check_session.php", function (response) {
       if (typeof response === "string") response = JSON.parse(response);
@@ -24,15 +24,74 @@ $(document).ready(function () {
       $("#nav-avatar-image").attr("src", profileUrl);
       $("#nav-profile-name").text(current_user.first_name);
 
-      populateUserDropdown(to_assign_user);
+      if (!hasPopulatedDropdown) {
+        populateUserDropdown(to_assign_user);
+        hasPopulatedDropdown = true;
+      }
       getAllTasks();
       fetchAndAppendUsers("user", to_assign_user);
+      fetchRecords(current_user.user_id);
     }).fail(() => {
       window.location.href = "/hulom_final_sia/auth/login";
     });
   }
 
   checkSession();
+
+  async function fetchRecords(created_by) {
+    try {
+      const response = await $.get(
+        `../../api/task_record.php?created_by=${created_by}`
+      );
+      if (typeof response === "string") response = JSON.parse(response);
+
+      populateRecordsTable(response.payload);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }
+
+  function populateRecordsTable(records) {
+    const tableBody = $("#record-table-body");
+    const template = $("#records-template");
+    tableBody.empty();
+
+    records.forEach((record) => {
+      const newRow = template.contents().clone();
+      newRow.find(".row-name").text(`${record.first_name} ${record.last_name}`);
+      newRow.find(".row-title").text(record.title);
+      newRow.find(".row-description").text(record.description);
+
+      const statusBadge = newRow.find(".row-status .badge");
+      const taskStatus = record.task_status;
+
+      let badgeText = "";
+      let badgeClass = "";
+
+      switch (taskStatus) {
+        case "complete":
+          badgeText = "Complete";
+          badgeClass = "badge-success";
+          break;
+        default:
+          badgeText = "Late";
+          badgeClass = "badge-error";
+          break;
+      }
+
+      statusBadge
+        .text(badgeText)
+        .removeClass("badge-success badge-error badge-warning")
+        .addClass(badgeClass);
+
+      newRow.find(".row-due_date").text(formatDueDateWithAMPM(record.due_date));
+      newRow
+        .find(".row-submitted_at")
+        .text(formatDueDateWithAMPM(record.submitted_at));
+
+      tableBody.append(newRow);
+    });
+  }
 
   // pag add sa mga students sa select
   function populateUserDropdown(users) {
@@ -136,7 +195,14 @@ $(document).ready(function () {
       console.error("Error fetching data:", error);
     }
   }
-
+  function isValidUrl(str) {
+    try {
+      new URL(str);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
   async function populateAssignedStudentTable(studentList) {
     try {
       const tbody = $("#assigned-student-tbody");
@@ -164,24 +230,78 @@ $(document).ready(function () {
         newRow
           .find(".row-url")
           .html(
-            `<a href="${`${submittedFileBaseUrl}${student.attachment_url}`}" target="_blank" class="link text-primary">View</a>`
+            student.attachment_url
+              ? isValidUrl(student.attachment_url)
+                ? `<a href="${student.attachment_url}" target="_blank" class="link text-primary">View</a>`
+                : `<a href="${submittedFileBaseUrl}${student.attachment_url}" target="_blank" class="link text-primary">View</a>`
+              : "No file"
           );
 
+        const submittedAt = new Date(student.submitted_at);
+        const dueDate = new Date(student.due_date);
+
+        let submittedText = formatDueDateWithAMPM(student.submitted_at);
+
+        if (student.task_status !== "complete" && submittedAt > dueDate) {
+          submittedText += " (Done Late)";
+        }
+
+        newRow.find(".row-submitted_at").text(submittedText);
+
         const statusBadge = newRow.find(".row-status .badge");
-        const isVerified = student.task_status === "complete";
+        const taskStatus = student.task_status;
+
+        let badgeText = "";
+        let badgeClass = "";
+
+        switch (taskStatus) {
+          case "complete":
+            badgeText = "Complete";
+            badgeClass = "badge-success";
+            break;
+          case "submitted":
+            badgeText = "Submitted";
+            badgeClass = "badge-accent";
+            break;
+          case "late":
+            badgeText = "Done late";
+            badgeClass = "badge-error";
+            break;
+          default:
+            badgeText = "Pending";
+            badgeClass = "badge-warning";
+            break;
+        }
 
         statusBadge
-          .text(isVerified ? "Complete" : "Pending")
-          .removeClass("badge-success badge-error")
-          .addClass(isVerified ? "badge-success" : "badge-error");
+          .text(badgeText)
+          .removeClass("badge-success badge-error badge-warning")
+          .addClass(badgeClass);
 
-        const task_status =
-          student.task_status != "complete" ? "complete" : "pending";
+        const actionBtn = newRow.find(".btn-success");
 
-        newRow.find(".btn-success").on("click", () => {
-          updateAssignedTaskStatus(student.assigned_task_id, task_status);
-          showSubmitStudent(student.task_id);
-        });
+        const isLate =
+          new Date(student.submitted_at) > new Date(student.due_date);
+
+        if (
+          taskStatus === "complete" ||
+          taskStatus === "late" ||
+          taskStatus === "pending"
+        ) {
+          actionBtn
+            .prop("disabled", true)
+            .addClass("opacity-50 cursor-not-allowed");
+        } else {
+          actionBtn
+            .prop("disabled", false)
+            .removeClass("opacity-50 cursor-not-allowed");
+
+          actionBtn.on("click", async () => {
+            const newStatus = isLate ? "late" : "complete";
+            await updateAssignedTaskStatus(student.assigned_task_id, newStatus);
+            await showSubmitStudent(student.task_id);
+          });
+        }
 
         tbody.append(newRow);
       });
@@ -192,8 +312,8 @@ $(document).ready(function () {
 
   async function updateAssignedTaskStatus(assignedTaskId, taskStatus) {
     try {
-      const response = await $.ajax({
-        url: "../../api/update_assigned_task_status.php",
+      await $.ajax({
+        url: "../../api/update_status_assigned_task.php",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({
@@ -202,10 +322,7 @@ $(document).ready(function () {
         }),
       });
 
-      const data =
-        typeof response === "string" ? JSON.parse(response) : response;
-
-      console.log(data.message);
+      checkSession();
     } catch (error) {
       console.error("Error populating assigned students:", error);
     }
